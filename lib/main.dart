@@ -56,7 +56,27 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: <Widget>[
-          Image.asset("assets/images/logo.png")
+          FutureBuilder(
+            future: getUsers(),
+            builder: (BuildContext context, AsyncSnapshot snapshot){
+              if(snapshot.hasError){
+                return Center(child: Text(snapshot.error.toString()),);
+              }
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator(),);
+              }
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index){
+                  return ListTile(
+                    leading: CircleAvatar(child: Text(snapshot.data[index].name[0]),),
+                    title: Text(snapshot.data[index].name),
+                    subtitle: Text(snapshot.data[index].email),
+                  );
+                },
+              );
+            },
+          )
         ],
       )
     );
